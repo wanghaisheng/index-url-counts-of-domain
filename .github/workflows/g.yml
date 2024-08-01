@@ -1,0 +1,38 @@
+name: Google Search URL Extractor
+
+on:
+  workflow_dispatch:
+    inputs:
+      month:
+        description: 'Month in YYYY-MM format'
+        required: true
+        type: string
+      tag_prefix:
+        description: 'The TikTok tag URL prefix'
+        required: true
+        type: string
+      mongodb_uri:
+        description: 'MongoDB connection URI'
+        required: true
+        type: string
+
+jobs:
+  search:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests beautifulsoup4 pymongo
+
+    - name: Run search script
+      run: python searchgoogle.py ${{ github.event.inputs.month }} ${{ github.event.inputs.tag_prefix }} ${{ github.event.inputs.mongodb_uri }}
